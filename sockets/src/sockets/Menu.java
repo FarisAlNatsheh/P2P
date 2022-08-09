@@ -55,6 +55,7 @@ public class Menu extends JFrame implements ActionListener{
 						externalAddress.setEnabled(true);
 						loadingLabel.setText("Progress: 100%      Time taken: "+ (int)time + " ms");
 						cancel.setText("Restart scan");
+						setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 					}
 					timer.stop();
 				}
