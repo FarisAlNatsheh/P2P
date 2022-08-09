@@ -236,12 +236,6 @@ public class PingScanner{
 	public void setFlag(boolean n) {
 		flag = n;
 	}
-//	public static void main(String[] args) {
-//		System.out.println(UPnP.getDefaultGatewayIP());
-//		double time = System.nanoTime();
-//		new PingScanner().scanPing();
-//		System.out.println((System.nanoTime()-time)/1000000000.0);
-//	}
 }
 
 
