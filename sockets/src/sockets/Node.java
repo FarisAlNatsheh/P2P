@@ -2,6 +2,8 @@ package sockets;
 
 import java.net.Socket;
 
+import javax.swing.JOptionPane;
+
 import com.dosse.upnp.UPnP;
 
 import java.net.ServerSocket;
@@ -18,6 +20,9 @@ public class Node {
 	private DataInputStream dis;
 	private String recieved = "";
 	private int ready = 0;
+	public static int rand(int min, int max) {
+		return (int) Math.floor(Math.random()*(max-min+1)+min);
+	}
 	public boolean isReady() {
 		return ready > 1;
 	}
@@ -25,21 +30,20 @@ public class Node {
 		return recieved;
 	}
 	public int getDataRecieved() {
-		//System.out.println();
 		return dataRecieved;
 	}
 	public Node(int sPort, int cPort, String ip) {
 		System.out.println("Node started");
 		startP2P(sPort, cPort, ip);
-		
+
 	}
 	public void sendMessage(String s) {
-			try {
-				dout.writeUTF(s);
-				dout.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}  
+		try {
+			dout.writeUTF(s);
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}  
 	}
 	public void startSendSocket(final String ip, final int port) {
 		new Thread()
@@ -66,14 +70,27 @@ public class Node {
 
 		}.start(); 	
 	}
-
+	public void openPort(int port) {
+		while(true) {
+			if(!UPnP.isMappedTCP(port)) {
+				if(!UPnP.openPortTCP(port)) {
+					JOptionPane.showMessageDialog(null, "UPnP error.\nTry again with a different port (Recommended 19500+)","Error", JOptionPane.ERROR_MESSAGE); 
+					System.exit(1);
+				}
+				break;
+			}
+			else { 
+				port++;
+				System.out.println("Port changed to " + port);
+			}
+		}
+	}
 	public void startServerSocket(final int port) {
 		new Thread()
 		{
 			public void run() {
 				try{  
 					ss=new ServerSocket(port);  
-					UPnP.openPortTCP(port);
 					s=ss.accept();//establishes connection
 					System.out.println("Server started");
 					ready++;
@@ -92,6 +109,7 @@ public class Node {
 	public void startP2P(int sPort, int cPort, String ip) {
 		startSendSocket(ip, cPort);
 		startServerSocket(sPort);
+		openPort(sPort);
 	}
 
 

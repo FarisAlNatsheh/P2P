@@ -45,7 +45,7 @@ public class PingScanner{
 		try {
 			returnVal = p1.waitFor(30, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 			flag = true;
 		}
 		return (returnVal);

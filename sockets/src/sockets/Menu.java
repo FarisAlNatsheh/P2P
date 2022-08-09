@@ -9,17 +9,20 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.BorderFactory;
 import javax.swing.Timer;
+
+import com.dosse.upnp.UPnP;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 
 public class Menu extends JFrame implements ActionListener{
-
 	private static final long serialVersionUID = 1L;
 	private JPanel panel = new JPanel();
 	private Color color = panel.getBackground();
@@ -63,6 +66,7 @@ public class Menu extends JFrame implements ActionListener{
 			}
 		}
 	});
+	
 	public Menu() {
 		timer.setInitialDelay(100);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -155,6 +159,7 @@ public class Menu extends JFrame implements ActionListener{
 		};
 		scanThread.start();
 	}
+	boolean flag;
 	public void actionPerformed(ActionEvent e) {
 		//UPnP.openPortTCP(Integer.parseInt(serverPort.getText()));
 		if(e.getSource() == cancel) {
@@ -165,6 +170,7 @@ public class Menu extends JFrame implements ActionListener{
 				availableIPs.setEnabled(true);
 				scanner.setFlag(true);
 				externalAddress.setEnabled(true);
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				cancel.setText("Restart scan");
 			}
 			else {
@@ -178,13 +184,12 @@ public class Menu extends JFrame implements ActionListener{
 			}
 			return;
 		}
-		if(!ipAddress.isEditable()) {
+		if(!ipAddress.isEnabled()) {
+			String ip = ((String)availableIPs.getSelectedItem()).substring( ((String)availableIPs.getSelectedItem()).indexOf('(')+1, ((String)availableIPs.getSelectedItem()).length()-1);
 			if(!clientPort.isEditable())
-				new Window( Integer.parseInt(serverPort.getText()), Integer.parseInt(serverPort.getText()),
-						((String)availableIPs.getSelectedItem()).substring( ((String)availableIPs.getSelectedItem()).indexOf('(')+1, ((String)availableIPs.getSelectedItem()).length()-1));
+				new Window( Integer.parseInt(serverPort.getText()), Integer.parseInt(serverPort.getText()),ip);
 			else
-				new Window( Integer.parseInt(serverPort.getText()), Integer.parseInt(clientPort.getText()),
-						((String)availableIPs.getSelectedItem()).substring( ((String)availableIPs.getSelectedItem()).indexOf('(')+1, ((String)availableIPs.getSelectedItem()).length()-1));
+				new Window( Integer.parseInt(serverPort.getText()), Integer.parseInt(clientPort.getText()),((String)availableIPs.getSelectedItem()).substring( ((String)availableIPs.getSelectedItem()).indexOf('(')+1, ((String)availableIPs.getSelectedItem()).length()-1));
 		}
 		else {
 			if(!clientPort.isEditable())
