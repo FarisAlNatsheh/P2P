@@ -32,6 +32,8 @@ public class Menu extends JFrame implements ActionListener{
 	private JLabel labelServer = new JLabel("Server Port: ");
 	private JLabel labelIP = new JLabel("Available IPs: ");
 	private JLabel loadingLabel = new JLabel("Scan status");
+	private JLabel thisIP = new JLabel("External IP: ");
+	private JLabel thisMachine = new JLabel();
 	private JButton con = new JButton("Connect");
 	private JButton cancel = new JButton("Cancel scan");
 	private JComboBox<String> availableIPs= new JComboBox<String>();
@@ -54,7 +56,8 @@ public class Menu extends JFrame implements ActionListener{
 						availableIPs.addItem(i);
 						availableIPs.setEditable(false);
 						con.setEnabled(true);
-						availableIPs.setEnabled(true);
+						if(!externalAddress.isSelected())
+							availableIPs.setEnabled(true);
 						externalAddress.setEnabled(true);
 						loadingLabel.setText("Progress: 100%      Time taken: "+ (int)time + " ms");
 						cancel.setText("Restart scan");
@@ -66,8 +69,15 @@ public class Menu extends JFrame implements ActionListener{
 			}
 		}
 	});
-	
+
 	public Menu() {
+
+		new Thread() {
+			public void run() {
+				thisMachine.setText("Machine IPv4: " + scanner.getMachineIPV4());
+				thisIP.setText("External IP: " + UPnP.getExternalIP());
+			}
+		}.start();
 		timer.setInitialDelay(100);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("P2P Chat");
@@ -76,6 +86,8 @@ public class Menu extends JFrame implements ActionListener{
 		serverPort.setBorder(BorderFactory.createEtchedBorder());
 		clientPort.setBorder(BorderFactory.createEtchedBorder());
 		ipAddress.setBorder(BorderFactory.createEtchedBorder());
+		thisMachine.setBorder(BorderFactory.createLoweredBevelBorder());
+		thisIP.setBorder(BorderFactory.createLoweredBevelBorder());
 		clientPort.setEditable(false);
 		con.setEnabled(false);
 		availableIPs.setEnabled(false);
@@ -83,7 +95,8 @@ public class Menu extends JFrame implements ActionListener{
 		externalAddress.setEnabled(false);
 		clientPort.setBackground(color);
 		ipAddress.setBackground(color);
-		panel.setLayout(new GridLayout(6,2));
+
+		panel.setLayout(new GridLayout(7,2));
 		panel.add(labelServer);
 		panel.add(serverPort);
 		panel.add(samePC);
@@ -98,8 +111,9 @@ public class Menu extends JFrame implements ActionListener{
 		panel.add(cancel);
 
 		panel.add(loadingBar);
+		panel.add(thisIP);
 		panel.add(loadingLabel);
-
+		panel.add(thisMachine);
 		startScanThread();
 		timer.start();
 		samePC.addItemListener(new ItemListener() {
@@ -167,7 +181,8 @@ public class Menu extends JFrame implements ActionListener{
 				loadingBar.setValue(0);
 				availableIPs.setEditable(true);
 				con.setEnabled(true);
-				availableIPs.setEnabled(true);
+				if(!externalAddress.isSelected())
+					availableIPs.setEnabled(true);
 				scanner.setFlag(true);
 				externalAddress.setEnabled(true);
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
