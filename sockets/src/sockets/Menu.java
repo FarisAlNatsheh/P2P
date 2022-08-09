@@ -164,7 +164,7 @@ public class Menu extends JFrame implements ActionListener{
 				con.setEnabled(true);
 				availableIPs.setEnabled(true);
 				scanner.setFlag(true);
-				
+				externalAddress.setEnabled(true);
 				cancel.setText("Restart scan");
 			}
 			else {
