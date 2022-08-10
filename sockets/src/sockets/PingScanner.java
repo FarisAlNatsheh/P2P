@@ -14,6 +14,9 @@ import java.util.concurrent.TimeUnit;
 public class PingScanner{
 	private int testedIPs;
 	private boolean flag;
+	private String name;
+	private boolean checked;
+	
 	public Object[] checkHosts(String subnet){
 		ArrayList<String> openIPs = new ArrayList<String>();
 		for (int i=4;i<255;i++){
@@ -45,7 +48,8 @@ public class PingScanner{
 		try {
 			returnVal = p1.waitFor(30, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("Scan thread interrupted");
 			flag = true;
 		}
 		return (returnVal);
@@ -193,6 +197,7 @@ public class PingScanner{
 			if(flag) {
 				return avIPs;
 			}
+
 			if(testIP(i)) {
 				String[] temp = new String[avIPs.length+1];
 				for(int j =0; j < avIPs.length; j++) {
@@ -200,6 +205,7 @@ public class PingScanner{
 				}
 				temp[temp.length-1] = getIPName(i)+" ("+i+")";
 				avIPs = temp;
+
 			}
 			testedIPs++;
 
@@ -217,11 +223,30 @@ public class PingScanner{
 		byte[] bytes = ip.getAddress();
 		return bytes;
 	}
+
 	public String getIPName(String ip) {
 		InetAddress ipAdd;
+		
 		try {
 			ipAdd = InetAddress.getByAddress(getByteArr(ip));
-			return (ipAdd.getHostName());
+			checked = false;
+			Thread t = new Thread() {
+				public void run() {
+					name =ipAdd.getHostName();
+					checked = true;
+				}
+			};
+			t.start();
+			
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				System.out.println("Name grab interrupted");
+			}
+			t.interrupt();
+			if(!checked)
+				name = "Name not found";
+			return name;
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}

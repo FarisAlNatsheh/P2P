@@ -17,7 +17,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
@@ -32,8 +31,8 @@ public class Menu extends JFrame implements ActionListener{
 	private JLabel labelServer = new JLabel("Server Port: ");
 	private JLabel labelIP = new JLabel("Available IPs: ");
 	private JLabel loadingLabel = new JLabel("Scan status");
-	private JLabel thisIP = new JLabel("External IP: ");
-	private JLabel thisMachine = new JLabel();
+	private JTextArea thisIP = new JTextArea("External IP: ");
+	private JTextArea thisMachine = new JTextArea();
 	private JButton con = new JButton("Connect");
 	private JButton cancel = new JButton("Cancel scan");
 	private JComboBox<String> availableIPs= new JComboBox<String>();
@@ -44,6 +43,7 @@ public class Menu extends JFrame implements ActionListener{
 	private JCheckBox externalAddress = new JCheckBox("Custom Address");
 	private JProgressBar loadingBar = new JProgressBar();
 	private volatile double time;
+	private boolean local;
 	private Timer timer = new Timer(10, new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -95,7 +95,10 @@ public class Menu extends JFrame implements ActionListener{
 		externalAddress.setEnabled(false);
 		clientPort.setBackground(color);
 		ipAddress.setBackground(color);
-
+		thisMachine.setBackground(color);
+		thisIP.setBackground(color);
+		thisMachine.setEditable(false);
+		thisIP.setEditable(false);
 		panel.setLayout(new GridLayout(7,2));
 		panel.add(labelServer);
 		panel.add(serverPort);
@@ -118,7 +121,6 @@ public class Menu extends JFrame implements ActionListener{
 		timer.start();
 		samePC.addItemListener(new ItemListener() {
 
-
 			public void itemStateChanged(ItemEvent e) {
 
 				if(e.getStateChange() == 1) {
@@ -134,21 +136,20 @@ public class Menu extends JFrame implements ActionListener{
 		});  
 		externalAddress.addItemListener(new ItemListener() {
 
-
 			public void itemStateChanged(ItemEvent e) {
 
 				if(e.getStateChange() == 1) {
 					ipAddress.setEnabled(true);
 					availableIPs.setEnabled(false);
 					ipAddress.setBackground(Color.WHITE);
-
+					local = true;
 
 				}
 				else {
 					ipAddress.setEnabled(false);
 					availableIPs.setEnabled(true);
 					ipAddress.setBackground(color);
-
+					local = false;
 				}
 			}
 
@@ -177,7 +178,9 @@ public class Menu extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		//UPnP.openPortTCP(Integer.parseInt(serverPort.getText()));
 		if(e.getSource() == cancel) {
-			if(scanThread.isAlive()) {
+			if(!flag) {
+				scanThread.interrupt();
+				//timer.stop();
 				loadingBar.setValue(0);
 				availableIPs.setEditable(true);
 				con.setEnabled(true);
@@ -187,6 +190,7 @@ public class Menu extends JFrame implements ActionListener{
 				externalAddress.setEnabled(true);
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				cancel.setText("Restart scan");
+				
 			}
 			else {
 				timer.start();
@@ -197,20 +201,21 @@ public class Menu extends JFrame implements ActionListener{
 				externalAddress.setEnabled(false);
 				cancel.setText("Cancel scan");
 			}
+			flag = !flag;
 			return;
 		}
 		if(!ipAddress.isEnabled()) {
 			String ip = ((String)availableIPs.getSelectedItem()).substring( ((String)availableIPs.getSelectedItem()).indexOf('(')+1, ((String)availableIPs.getSelectedItem()).length()-1);
 			if(!clientPort.isEditable())
-				new Window( Integer.parseInt(serverPort.getText()), Integer.parseInt(serverPort.getText()),ip);
+				new Window( Integer.parseInt(serverPort.getText()), Integer.parseInt(serverPort.getText()),ip, local);
 			else
-				new Window( Integer.parseInt(serverPort.getText()), Integer.parseInt(clientPort.getText()),((String)availableIPs.getSelectedItem()).substring( ((String)availableIPs.getSelectedItem()).indexOf('(')+1, ((String)availableIPs.getSelectedItem()).length()-1));
+				new Window( Integer.parseInt(serverPort.getText()), Integer.parseInt(clientPort.getText()),((String)availableIPs.getSelectedItem()).substring( ((String)availableIPs.getSelectedItem()).indexOf('(')+1, ((String)availableIPs.getSelectedItem()).length()-1), local);
 		}
 		else {
 			if(!clientPort.isEditable())
-				new Window( Integer.parseInt(serverPort.getText()), Integer.parseInt(serverPort.getText()),ipAddress.getText());
+				new Window( Integer.parseInt(serverPort.getText()), Integer.parseInt(serverPort.getText()),ipAddress.getText(), local);
 			else
-				new Window( Integer.parseInt(serverPort.getText()), Integer.parseInt(clientPort.getText()),ipAddress.getText());
+				new Window( Integer.parseInt(serverPort.getText()), Integer.parseInt(clientPort.getText()),ipAddress.getText(), local);
 
 		}
 		this.dispose();

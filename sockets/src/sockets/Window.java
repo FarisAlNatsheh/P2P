@@ -27,8 +27,8 @@ public class Window implements KeyListener{
 	private JButton sendB;
 	private JPanel text;
 	private JScrollPane scroll;
-	public Window(final int sPort, int cPort, final String ip){
-		node = new Node(sPort,cPort, ip);
+	public Window(final int sPort, int cPort, final String ip, boolean local){
+		node = new Node(sPort,cPort, ip, local);
 		frame = new JFrame("P2P App" + " " + ip + ":" + cPort);
 		panel = new JPanel();
 		chatbox = new JTextArea();

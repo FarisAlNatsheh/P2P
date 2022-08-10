@@ -20,9 +20,6 @@ public class Node {
 	private DataInputStream dis;
 	private String recieved = "";
 	private int ready = 0;
-	public static int rand(int min, int max) {
-		return (int) Math.floor(Math.random()*(max-min+1)+min);
-	}
 	public boolean isReady() {
 		return ready > 1;
 	}
@@ -32,10 +29,9 @@ public class Node {
 	public int getDataRecieved() {
 		return dataRecieved;
 	}
-	public Node(int sPort, int cPort, String ip) {
+	public Node(int sPort, int cPort, String ip, boolean local) {
 		System.out.println("Node started");
-		startP2P(sPort, cPort, ip);
-
+		startP2P(sPort, cPort, ip, local);
 	}
 	public void sendMessage(String s) {
 		try {
@@ -81,6 +77,7 @@ public class Node {
 			}
 			else { 
 				port++;
+				JOptionPane.showMessageDialog(null, "Port changed\nYour port number has been changed to " + port,"Alert", JOptionPane.WARNING_MESSAGE); 
 				System.out.println("Port changed to " + port);
 			}
 		}
@@ -106,10 +103,11 @@ public class Node {
 			} 
 		}.start();
 	}
-	public void startP2P(int sPort, int cPort, String ip) {
+	public void startP2P(int sPort, int cPort, String ip, boolean local) {
 		startSendSocket(ip, cPort);
 		startServerSocket(sPort);
-		openPort(sPort);
+		if(local)
+			openPort(sPort);
 	}
 
 
