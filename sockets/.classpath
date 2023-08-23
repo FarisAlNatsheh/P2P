@@ -6,8 +6,8 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/kali/Desktop/WaifUPnP.jar"/>
-	<classpathentry kind="lib" path="/home/kali/Desktop/WaifUPnP-javadoc.jar"/>
-	<classpathentry kind="lib" path="/home/kali/Desktop/WaifUPnP-sources.jar"/>
+	<classpathentry kind="lib" path="libs/WaifUPnP.jar"/>
+	<classpathentry kind="lib" path="libs/WaifUPnP-javadoc.jar"/>
+	<classpathentry kind="lib" path="libs/WaifUPnP-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
