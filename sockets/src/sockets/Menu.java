@@ -106,7 +106,7 @@ public class Menu extends JFrame implements ActionListener{
 		panel.add(clientPort);
 		panel.add(labelIP);
 		panel.add(availableIPs);
-
+		
 
 		panel.add(externalAddress);
 		panel.add(ipAddress);
@@ -173,6 +173,7 @@ public class Menu extends JFrame implements ActionListener{
 			}
 		};
 		scanThread.start();
+		availableIPs.addItem("localhost (127.0.0.1)");
 	}
 	boolean flag;
 	public void actionPerformed(ActionEvent e) {
@@ -190,7 +191,6 @@ public class Menu extends JFrame implements ActionListener{
 				externalAddress.setEnabled(true);
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				cancel.setText("Restart scan");
-				
 			}
 			else {
 				timer.start();
@@ -200,6 +200,7 @@ public class Menu extends JFrame implements ActionListener{
 				availableIPs.setEnabled(false);
 				externalAddress.setEnabled(false);
 				cancel.setText("Cancel scan");
+				availableIPs.addItem("localhost (127.0.0.1)");
 			}
 			flag = !flag;
 			return;
